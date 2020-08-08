@@ -1,0 +1,3 @@
+[submodule "code/deps/lotus"]
+	path = code/deps/lotus
+	url = https://github.com/TankleL/lotus.git
