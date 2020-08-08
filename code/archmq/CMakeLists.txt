@@ -1,4 +1,4 @@
-#lotus level cmakelists
+#archmq level cmakelists
 cmake_minimum_required (VERSION 2.8)
 message("CMAKE LEVEL: ARCHMQ >>>>>>>>>>>>>>>>>>>>")
 
