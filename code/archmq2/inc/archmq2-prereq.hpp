@@ -1,5 +1,8 @@
 #pragma once
 
+#include <vector>
+#include <string>
+
 #ifdef WIN32
 #	ifdef API_DEV_MOD
 #		define	ARCHMQ2_API __declspec(dllexport)
