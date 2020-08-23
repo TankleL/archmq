@@ -3,10 +3,11 @@
 
 int ARCHMQ2_API m();
 
-bool ARCHMQ2_API subscribe_tcp(
+void ARCHMQ2_API subscribe_tcp(
     const std::string& ctrlep_ipaddr,
     const uint16_t ctrlep_port,
-    const std::string& mqpath, std::string& passcode);
+    const std::string& mqpath,
+    const std::function<void(int /*status*/, const std::string& /*passcode*/)>& callback);
 
 
 

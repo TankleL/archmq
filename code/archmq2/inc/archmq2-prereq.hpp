@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <functional>
 
 #ifdef WIN32
 #	ifdef API_DEV_MOD

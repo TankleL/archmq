@@ -1,4 +1,5 @@
 #include "control-endpoint.hpp"
+#include "globalhub.hpp"
 
 using namespace lotus;
 using namespace archmq;
