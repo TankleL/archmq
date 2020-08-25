@@ -5,20 +5,20 @@
 namespace archmq
 {
     /* ****************************************************
-     * @class MainEnpoint
+     * @class MasterEnpoint
      * @brief singleton, acts as one of the most important
      * core components of archmq
      * ***************************************************/
-    class MainEndpoint
+    class MasterEndpoint 
     {
     private:
-        MainEndpoint();
+        MasterEndpoint();
 
     public:
-        ~MainEndpoint();
+        ~MasterEndpoint();
 
     public:
-        static MainEndpoint& get_intance();
+        static MasterEndpoint& get_intance();
         void boot();
         
     private:

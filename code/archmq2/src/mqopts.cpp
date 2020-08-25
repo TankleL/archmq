@@ -23,7 +23,8 @@ void ARCHMQ2_API subscribe_tcp(
 
         Message msg;
         msg.im = Message::im_request;
-        msg.payload = mqpath;
+        msg.payload = "ARCHMQ-SUBSCRIBE" "\n"; // [Param 1] action
+        msg.payload += mqpath;                 // [Param 2] message queue path
 
         sess.send(std::move(msg));
     });

@@ -7,10 +7,15 @@ namespace archmq
     class SubscriberCollection
     {
     public:
-        void add(std::unique_ptr<Subscriber>&& subscriber);
+        typedef std::unordered_map<std::string, std::unique_ptr<Subscriber>>
+            subscribers_map_t;
+
+    public:
+        void add(const std::string& mqpath, std::unique_ptr<Subscriber>&& subscriber);
         Subscriber* get(const std::string& mqpath) const;
 
     private:
+        subscribers_map_t _subscribersmap;
     };
 }
 

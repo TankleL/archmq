@@ -1,5 +1,6 @@
 #include "control-endpoint.hpp"
 #include "globalhub.hpp"
+#include "stringutil.hpp"
 
 using namespace lotus;
 using namespace archmq;
@@ -24,7 +25,17 @@ void ControlEndpoint::boot()
 
 void ControlEndpoint::_on_received(Session& session, const Message& msg)
 {
+    
+    size_t offset = 0;
+    std::string_view action = StringUtil::readutil(msg.payload, '\n', 0, &offset);
 
+    if (action == "ARCHMQ-SUBSCRIBE")
+    {
+        std::string_view mqpath = StringUtil::readutil(msg.payload, '\n', offset, &offset);
+
+        auto sub = std::make_unique<Subscriber>(std::string(mqpath));
+        Global::subscribercol.add(std::string(mqpath), std::move(sub));
+    }
 }
 
 
