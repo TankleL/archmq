@@ -1,15 +1,12 @@
 #include "archmq2-api-dev-mode.hpp"
 #include "mqopts.hpp"
 #include "lotus.hpp"
+#include "stringutil.hpp"
 
 using namespace lotus;
+using namespace archmq2;
 
-int ARCHMQ2_API m()
-{
-    return 10;
-}
-
-void ARCHMQ2_API subscribe_tcp(
+void ARCHMQ2_API archmq2::subscribe_tcp(
     const std::string& ctrlep_ipaddr,
     const uint16_t ctrlep_port,
     const std::string& mqpath,
@@ -31,7 +28,19 @@ void ARCHMQ2_API subscribe_tcp(
 
     client->set_session_recevied_callback([=](lotus::Session & session, const lotus::Message & msg) -> void {
         assert(msg.im == Message::im_response);
-        callback(200, msg.payload);
+
+        size_t offset = 0;
+        auto opt = StringUtil::readutil(msg.payload, '\n', 0, &offset);
+
+        if (opt == "ARCHMQ-SUBSCRIBE-RESP")
+        {
+            auto passcode = StringUtil::readutil(msg.payload, '\n', offset + 1, &offset);
+            callback(200, std::string(passcode));
+        }
+        else
+        {
+            callback(400, "");
+        }
     });
 
     client->connect(lotus::SocketEndpoint(ctrlep_ipaddr, ctrlep_port));

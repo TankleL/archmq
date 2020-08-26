@@ -2,6 +2,7 @@
 cmake_minimum_required (VERSION 3.0)
 message("CMAKE LEVEL: ARCHMQ2 >>>>>>>>>>>>>>>>>>>>")
 
+set(CMAKE_CXX_STANDARD 17)
 set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}")
 
 FILE(GLOB_RECURSE ARCHMQ2_INC_FILES "inc/*.hpp")

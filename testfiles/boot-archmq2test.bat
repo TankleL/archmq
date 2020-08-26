@@ -1,0 +1,1 @@
+"..\code\build\Debug\archmq2test.exe"

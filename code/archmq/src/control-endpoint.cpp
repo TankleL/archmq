@@ -25,16 +25,22 @@ void ControlEndpoint::boot()
 
 void ControlEndpoint::_on_received(Session& session, const Message& msg)
 {
-    
     size_t offset = 0;
     std::string_view action = StringUtil::readutil(msg.payload, '\n', 0, &offset);
 
     if (action == "ARCHMQ-SUBSCRIBE")
     {
-        std::string_view mqpath = StringUtil::readutil(msg.payload, '\n', offset, &offset);
+        std::string_view mqpath = StringUtil::readutil(msg.payload, '\n', offset + 1, &offset);
 
         auto sub = std::make_unique<Subscriber>(std::string(mqpath));
+        auto passcode = sub->get_passcode();
         Global::subscribercol.add(std::string(mqpath), std::move(sub));
+
+        Message resp;
+        resp.im = Message::im_response;
+        resp.payload = "ARCHMQ-SUBSCRIBE-RESP" "\n";
+        resp.payload += passcode;
+        session.send(std::move(resp));
     }
 }
 
