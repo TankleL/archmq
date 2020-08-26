@@ -24,6 +24,7 @@ namespace archmq
 
     private:
         void _on_received(lotus::Session& session, const lotus::Message& msg);
+        bool _subscriber_connect(const std::string_view& mqpath, const std::string_view& passcode);
 
     private:
         lotus::SocketStreamServer   _tcpsvr;

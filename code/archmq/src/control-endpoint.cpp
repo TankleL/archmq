@@ -42,6 +42,15 @@ void ControlEndpoint::_on_received(Session& session, const Message& msg)
         resp.payload += passcode;
         session.send(std::move(resp));
     }
+    else
+    { // TODO: bad request handling
+        Message resp;
+        resp.im = Message::im_response;
+        resp.payload = "400";
+
+        session.add_control_bit(Session::scb_end_connection);
+        session.send(std::move(resp));
+    }
 }
 
 

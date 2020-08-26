@@ -49,3 +49,51 @@ void ARCHMQ2_API archmq2::subscribe_tcp(
 }
 
 
+void ARCHMQ2_API archmq2::connect_data_endpoint(
+    const std::string& dataep_ipaddr,
+    const uint16_t dataep_port,
+    const std::string& mqpath,
+    const std::string& passcode,
+    const std::function<void(lotus::Client& client, int /*status*/)>& connect_callback,
+    const std::function<void(lotus::Client& /*client*/, lotus::Session& /*session*/, const lotus::Message& /*msg*/)>& data_callback)
+{
+    SocketStreamClient* client = SocketStreamClient::create();
+
+    client->set_on_connected([=](lotus::Client & client) -> void {
+        auto& sess = client.newsession();
+        sess.add_control_bit(Session::scb_keep_session);
+
+        Message msg;
+        msg.im = Message::im_request;
+        msg.payload = "ARCHMQ-SUBSCRIBER-CONNECT" "\n";
+        msg.payload += mqpath + "\n";
+        msg.payload += passcode;
+
+        sess.send(std::move(msg));
+    });
+
+    client->set_session_recevied_callback([=](lotus::Session & session, const lotus::Message & msg) -> void {
+        size_t offset = 0;
+        auto action = StringUtil::readutil(msg.payload, '\n', 0, &offset);
+
+        if (action == "ARCHMQ-DATA-PULSE")
+        {
+            data_callback(*client, session, msg);
+        }
+        else if(action == "ARCHMQ-SUBSCRIBER-CONNECT-RESP")
+        {
+            auto status = StringUtil::readutil(msg.payload, '\n', offset + 1, &offset);
+            connect_callback(*client, atoi(std::string(status).c_str()));
+        }
+        else
+        { // TODO: handle errors
+        }
+    });
+
+    client->connect(lotus::SocketEndpoint(dataep_ipaddr, dataep_port));
+
+    lotus::oneuv::run();
+
+}
+
+
