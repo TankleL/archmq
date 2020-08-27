@@ -1,5 +1,7 @@
 #include "master-endpoint.hpp"
 #include "lotus.hpp"
+#include "stringutil.hpp"
+#include "globalhub.hpp"
 
 using namespace lotus;
 using namespace archmq;
@@ -24,7 +26,24 @@ void MasterEndpoint::boot()
 
 void MasterEndpoint::_on_received(Session& session, const Message& msg)
 {
+    size_t offset = 0;
+    auto mqpath = StringUtil::readutil(msg.payload, '\n', 0, &offset);
 
+    Subscriber* sub = Global::subscribercol.get(std::string(mqpath));
+    if (sub != nullptr)
+    {
+        sub->dispatch_message(session, msg);
+    }
+    else
+    { // TODO: error handling
+        session.add_control_bit(Session::scb_end_connection);
+
+        Message resp;
+        resp.im = Message::im_response;
+        resp.payload = "404";
+
+        session.send(std::move(resp));
+    }
 }
 
 

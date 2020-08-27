@@ -33,7 +33,10 @@ void DataEndpoint::_on_received(Session& session, const Message& msg)
         auto mqpath = StringUtil::readutil(msg.payload, '\n', offset + 1, &offset);
         auto passcode = StringUtil::readutil(msg.payload, '\n', offset + 1, &offset);
 
-        bool res = _subscriber_connect(mqpath, passcode);
+        bool res = _subscriber_connect(
+            mqpath,
+            passcode,
+            session.get_localstate_refinable_ptr(SESS_LS_CONN_STREAM_HANDLE_IDX));
 
         Message resp;
         resp.im = Message::im_response;
@@ -52,7 +55,10 @@ void DataEndpoint::_on_received(Session& session, const Message& msg)
     }
 }
 
-bool DataEndpoint::_subscriber_connect(const std::string_view& mqpath, const std::string_view& passcode)
+bool DataEndpoint::_subscriber_connect(
+    const std::string_view& mqpath,
+    const std::string_view& passcode,
+    lotus::oneuv::handle_t client_handle)
 {
     bool res = false;
     Subscriber* sub = Global::subscribercol.get(std::string(mqpath));
@@ -61,7 +67,7 @@ bool DataEndpoint::_subscriber_connect(const std::string_view& mqpath, const std
         sub->get_passcode() == passcode &&
         sub->get_mqpath() == mqpath)
     {
-        res = sub->connect();
+        res = sub->connect(&_tcpsvr, client_handle);
     }
 
     return res;
