@@ -57,7 +57,7 @@ void ARCHMQ2_API archmq2::connect_data_endpoint(
     const std::function<void(lotus::Client& client, int /*status*/)>& connect_callback,
     const std::function<void(lotus::Client& /*client*/, lotus::Session& /*session*/, const lotus::Message& /*msg*/)>& data_callback)
 {
-    SocketStreamClient* client = SocketStreamClient::create();
+    SocketStreamClient* client = SocketStreamClient::create(true);
 
     client->set_on_connected([=](lotus::Client & client) -> void {
         auto& sess = client.newsession();
