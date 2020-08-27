@@ -5,7 +5,7 @@ using namespace archmq;
 
 Subscriber::Subscriber(const std::string& mqpath)
     : _mqpath(mqpath)
-    , _passcode(RandomUtil::alphabet_string(128))
+    , _passcode(RandomUtil::alphabet_string_variable_length(1024, 512))
     , _status(SS_Offline)
 {}
 

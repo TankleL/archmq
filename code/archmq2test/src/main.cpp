@@ -24,11 +24,9 @@ int main(int argc, char** argv)
         mqpasscode,
         [](lotus::Client & client, int status) -> void {
             int c = 0;
-
         },
         [](lotus::Client & client, lotus::Session & session, const lotus::Message & msg) -> void {
             int c = 0;
-
         }
     );
 

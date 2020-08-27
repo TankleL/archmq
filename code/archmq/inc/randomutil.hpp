@@ -22,6 +22,16 @@ namespace archmq
             return result;
         }
 
+        static std::string alphabet_string_variable_length(size_t maxlength, size_t minlength = 1)
+        {
+            std::uniform_int_distribution<size_t> rnddis(minlength, maxlength);
+
+            _ensure_random_engine();
+            size_t len = rnddis(*_rndeng);
+
+            return alphabet_string(len);
+        }
+
     private:
         static void _ensure_random_engine()
         {
