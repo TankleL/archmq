@@ -11,5 +11,6 @@ add_subdirectory( deps/lotus/code)
 add_subdirectory( archmq )
 add_subdirectory( archmq2 )
 add_subdirectory( archmq2test )
+add_subdirectory( archmqtest )
 
 message("CMAKE LEVEL: CODE <<<<<<<<<<<<<<<<<<<<<")
