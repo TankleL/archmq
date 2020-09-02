@@ -28,7 +28,30 @@ void DataEndpoint::_on_received(Session& session, const Message& msg)
     size_t offset = 0;
     auto action = StringUtil::readutil(msg.payload, '\n', 0, &offset);
 
-    if (action == "ARCHMQ-SUBSCRIBER-CONNECT")
+    if (action == "ARCHMQ-SUBSCRIBER-SENDMSG")
+    {
+        auto subid = StringUtil::readutil(msg.payload, '\n', offset + 1, &offset);
+        uint32_t id = atoi(std::string(subid).c_str());
+        Subscriber* sub = Global::subscribercol.get(id);
+
+        if (sub != nullptr)
+        {
+            auto payload = StringUtil::readutil(msg.payload, '\n', offset + 1, &offset);
+                
+            Message transfer;
+            transfer.im = msg.im;
+            transfer.session_id = msg.session_id;
+            transfer.session_payload = msg.session_payload;
+            transfer.version = msg.version;
+            transfer.payload = std::string(payload);
+
+            sub->send_message(std::move(transfer));
+        }
+        else
+        { // TODO: error handling
+        }
+    }
+    else if (action == "ARCHMQ-SUBSCRIBER-CONNECT")
     {
         auto mqpath = StringUtil::readutil(msg.payload, '\n', offset + 1, &offset);
         auto passcode = StringUtil::readutil(msg.payload, '\n', offset + 1, &offset);
@@ -42,8 +65,12 @@ void DataEndpoint::_on_received(Session& session, const Message& msg)
         resp.im = Message::im_response;
         if (res)
         { // succeeded
-            resp.payload = "ARCHMQ-SUBSCRIBER-CONNECT-RESP" "\n";
-            resp.payload += "200";
+            std::ostringstream oss;
+            oss << "ARCHMQ-SUBSCRIBER-CONNECT-RESP" "\n";
+            oss << "200" "\n";
+            oss << Global::subscribercol.get(std::string(mqpath))->get_id();
+
+            resp.payload = oss.str();
         }
         else
         { // failed

@@ -15,7 +15,7 @@ namespace archmq2
         const uint16_t dataep_port,
         const std::string& mqpath,
         const std::string& passcode,
-        const std::function<void(lotus::Client& /*client*/, int /*status*/)>& connect_callback,
+        const std::function<void(lotus::Client& /*client*/, int /*status*/, uint32_t /*subid*/)>& connect_callback,
         const std::function<void(lotus::Client& /*client*/, lotus::Session& /*session*/, const lotus::Message& /*msg*/)>& data_callback
     );
 }

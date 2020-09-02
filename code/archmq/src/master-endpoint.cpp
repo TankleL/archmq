@@ -32,6 +32,7 @@ void MasterEndpoint::_on_received(Session& session, const Message& msg)
     Subscriber* sub = Global::subscribercol.get(std::string(mqpath));
     if (sub != nullptr)
     {
+        sub->set_master_server_info(&_tcpsvr, session.get_localstate_refinable_ptr(SESS_LS_CONN_STREAM_HANDLE_IDX));
         sub->dispatch_message(session, msg);
     }
     else

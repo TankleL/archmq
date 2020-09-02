@@ -54,7 +54,7 @@ void ARCHMQ2_API archmq2::connect_data_endpoint(
     const uint16_t dataep_port,
     const std::string& mqpath,
     const std::string& passcode,
-    const std::function<void(lotus::Client& client, int /*status*/)>& connect_callback,
+    const std::function<void(lotus::Client& /*client*/, int /*status*/, uint32_t /*subid*/)>& connect_callback,
     const std::function<void(lotus::Client& /*client*/, lotus::Session& /*session*/, const lotus::Message& /*msg*/)>& data_callback)
 {
     SocketStreamClient* client = SocketStreamClient::create(true);
@@ -83,7 +83,12 @@ void ARCHMQ2_API archmq2::connect_data_endpoint(
         else if(action == "ARCHMQ-SUBSCRIBER-CONNECT-RESP")
         {
             auto status = StringUtil::readutil(msg.payload, '\n', offset + 1, &offset);
-            connect_callback(*client, atoi(std::string(status).c_str()));
+            auto subid = StringUtil::readutil(msg.payload, '\n', offset + 1, &offset);
+
+            connect_callback(
+                *client,
+                atoi(std::string(status).c_str()),
+                atoi(std::string(subid).c_str()));
         }
         else
         { // TODO: handle errors
