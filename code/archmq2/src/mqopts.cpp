@@ -44,8 +44,6 @@ void ARCHMQ2_API archmq2::subscribe_tcp(
     });
 
     client->connect(lotus::SocketEndpoint(ctrlep_ipaddr, ctrlep_port));
-    
-    lotus::oneuv::run();
 }
 
 
@@ -96,9 +94,11 @@ void ARCHMQ2_API archmq2::connect_data_endpoint(
     });
 
     client->connect(lotus::SocketEndpoint(dataep_ipaddr, dataep_port));
+}
 
+void ARCHMQ2_API archmq2::mqloop()
+{
     lotus::oneuv::run();
-
 }
 
 
